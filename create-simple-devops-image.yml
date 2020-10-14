@@ -1,0 +1,22 @@
+---
+- hosts: ansible-server
+  become: false 
+  vars_files:
+    - variable_vars
+
+
+  tasks:
+  - name: create docker image using war file
+    command: docker build -t simple-devops-image .
+    args:
+      chdir: "{{ path }}" 
+
+  - name: create tag to image
+    command: docker tag simple-devops-image ravismd/simple-devops-image
+
+  - name: push image on to dockerhub
+    command: docker push ravismd/simple-devops-image
+
+  - name: remove docker images form ansible server
+    command: docker rmi simple-devops-image:latest ravismd/simple-devops-image
+    ignore_errors: yes
